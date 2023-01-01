@@ -45,6 +45,9 @@ export class CompanyController {
       ...body,
       partnerId: userId,
     });
+    if (req.session.passport) {
+      req.session.passport.user.company = newCompany;
+    }
     res.status(200).json({
       success: true,
       data: newCompany,
