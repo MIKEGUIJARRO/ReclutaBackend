@@ -14,9 +14,9 @@ export class CompanyController {
     req: AuthRequest,
     res: Response
   ): Promise<void> => {
-    const userId = req.user.id;
+    const userId = parseInt(req.user.id);
     const companyId = parseInt(req.params.companyId);
-    const company = await this.companyService.findOne(companyId);
+    const company = await this.companyService.findOne(companyId, userId);
     res.status(200).json({
       success: true,
       data: company,
@@ -27,9 +27,8 @@ export class CompanyController {
     req: AuthRequest,
     res: Response
   ): Promise<void> => {
-    const userId = req.user.id;
-    const companyId = parseInt(req.params.companyId);
-    const companies = await this.companyService.findAll();
+    const userId = parseInt(req.user.id);
+    const companies = await this.companyService.findAll(userId);
     res.status(200).json({
       success: true,
       data: companies,
@@ -57,14 +56,13 @@ export class CompanyController {
     res: Response
   ): Promise<void> => {
     const body = req.body;
-    const userId = req.user.id;
-    const companyId = req.params.companyId;
-    const updatedCompany = await this.companyService.update(body, {
-      where: {
-        id: companyId,
-        partnerId: userId,
-      },
-    });
+    const userId = parseInt(req.user.id);
+    const companyId = parseInt(req.params.companyId);
+    const updatedCompany = await this.companyService.update(
+      body,
+      companyId,
+      userId
+    );
     res.status(200).json({
       success: true,
       data: updatedCompany,
@@ -76,10 +74,8 @@ export class CompanyController {
     res: Response
   ): Promise<void> => {
     const companyId = parseInt(req.params.companyId);
-    const userId = req.user.id;
-    const deletedCompany = await this.companyService.delete({
-      where: { id: companyId, partnerId: userId },
-    });
+    const userId = parseInt(req.user.id);
+    const deletedCompany = await this.companyService.delete(companyId, userId);
     res.status(200).json({
       success: true,
       data: {},
