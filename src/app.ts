@@ -14,7 +14,7 @@ import { CompanyRoutes } from './routes/company.routes';
 declare module 'express-session' {
   interface SessionData {
     messages: string[];
-    passport: Object;
+    passport: any;
   }
 }
 
