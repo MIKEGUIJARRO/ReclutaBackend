@@ -1,11 +1,6 @@
 import { Request } from 'express';
+import { ExpressUser } from '../../common/types/ExpressUser';
 
 export interface AuthRequest extends Request {
-  user: {
-    id: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    email: string;
-  };
+  user: ExpressUser;
 }
