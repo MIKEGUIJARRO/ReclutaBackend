@@ -9,6 +9,7 @@ import session from 'express-session';
 import cors from 'cors';
 import connectSessionSequelize from 'connect-session-sequelize';
 import { CompanyRoutes } from './routes/company.routes';
+import { PositionsRoutes } from './routes/positions.routes';
 
 // Extending module
 declare module 'express-session' {
@@ -38,7 +39,7 @@ export class App {
     this.app.use(
       cors({
         origin: 'http://localhost:5173',
-        methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD'],
         credentials: true,
       })
     );
@@ -82,10 +83,12 @@ export class App {
     const authRoutes = new AuthRoutes();
     const candidatesRoutes = new CandidatesRoutes();
     const companyRoutes = new CompanyRoutes();
+    const positionsRoutes = new PositionsRoutes();
 
     mainRouter.use(`/${authRoutes.name}`, authRoutes.router);
     mainRouter.use(`/${candidatesRoutes.name}`, candidatesRoutes.router);
     mainRouter.use(`/${companyRoutes.name}`, companyRoutes.router);
+    mainRouter.use(`/${positionsRoutes.name}`, positionsRoutes.router);
 
     app.use(prefix + apiVersioning, mainRouter);
 
