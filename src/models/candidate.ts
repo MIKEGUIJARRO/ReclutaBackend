@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { DatabaseSequelize } from '../config/database/implementation/sequelize/database';
+import { Company } from './company';
 
 const databaseSequelize = new DatabaseSequelize();
 
@@ -31,3 +32,18 @@ Candidate.init(
     sequelize: databaseSequelize.getDatabaseInstance(), // We need to pass the connection instance
   }
 );
+
+// Associations
+Company.hasMany(Candidate, {
+  foreignKey: {
+    name: 'companyId',
+    allowNull: false,
+  },
+});
+
+Candidate.belongsTo(Company, {
+  foreignKey: {
+    name: 'companyId',
+    allowNull: false,
+  },
+});
