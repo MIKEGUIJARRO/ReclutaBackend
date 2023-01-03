@@ -22,6 +22,10 @@ Position.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    stages: {
+      type: DataTypes.ARRAY(DataTypes.TEXT),
+      allowNull: false,
+    },
   },
   {
     // Other model options go here
