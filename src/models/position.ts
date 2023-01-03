@@ -29,6 +29,7 @@ Position.init(
   }
 );
 
+// Associations
 Company.hasMany(Position, {
   foreignKey: {
     name: 'companyId',
