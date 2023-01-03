@@ -1,6 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { CandidateService } from '../services/candidates.service';
 import { CandidateSequelizeRepository } from '../services/repositories/implementation/sequelize/candidates.repository';
+import { RequestAuth } from './interfaces/AuthRequest';
 
 export class CandidatesController {
   private readonly candidateService: CandidateService;
@@ -10,12 +11,15 @@ export class CandidatesController {
   }
 
   public getCandidate = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
+    req: RequestAuth,
+    res: Response
   ): Promise<void> => {
     const candidateId = parseInt(req.params.candidateId);
-    const candidate = await this.candidateService.findOne(candidateId);
+    const companyId = parseInt(req.user.company.id);
+    const candidate = await this.candidateService.findOne(
+      candidateId,
+      companyId
+    );
     res.status(200).json({
       success: true,
       data: candidate,
@@ -23,11 +27,11 @@ export class CandidatesController {
   };
 
   public getCandidates = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
+    req: RequestAuth,
+    res: Response
   ): Promise<void> => {
-    const candidates = await this.candidateService.findAll();
+    const companyId = parseInt(req.user.company.id);
+    const candidates = await this.candidateService.findAll(companyId);
     res.status(200).json({
       success: true,
       data: candidates,
@@ -35,13 +39,14 @@ export class CandidatesController {
   };
 
   public postCandidate = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
+    req: RequestAuth,
+    res: Response
   ): Promise<void> => {
-    const body = req.body;
-    console.log(body);
-    const newCandidate = await this.candidateService.create(body);
+    const companyId = parseInt(req.user.company.id);
+    const newCandidate = await this.candidateService.create({
+      ...req.body,
+      companyId: companyId,
+    });
     res.status(200).json({
       success: true,
       data: newCandidate,
@@ -49,17 +54,18 @@ export class CandidatesController {
   };
 
   public putCandidate = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
+    req: RequestAuth,
+    res: Response
   ): Promise<void> => {
     const body = req.body;
-    const candidateId = req.params.candidateId;
-    const updatedCandidate = await this.candidateService.update(body, {
-      where: {
-        id: candidateId,
-      },
-    });
+    const candidateId = parseInt(req.params.candidateId);
+    const companyId = parseInt(req.user.company.id);
+
+    const updatedCandidate = await this.candidateService.update(
+      body,
+      candidateId,
+      companyId
+    );
     res.status(200).json({
       success: true,
       data: updatedCandidate,
@@ -67,14 +73,15 @@ export class CandidatesController {
   };
 
   public deleteCandidate = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
+    req: RequestAuth,
+    res: Response
   ): Promise<void> => {
     const candidateId = parseInt(req.params.candidateId);
-    const deletedCandidate = await this.candidateService.delete({
-      where: { id: candidateId },
-    });
+    const companyId = parseInt(req.user.company.id);
+    const deletedCandidate = await this.candidateService.delete(
+      candidateId,
+      companyId
+    );
     res.status(200).json({
       success: true,
       data: {},
