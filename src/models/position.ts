@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { DatabaseSequelize } from '../config/database/implementation/sequelize/database';
-import { Partner } from './partner';
+import { Company } from './company';
 
 const databaseSequelize = new DatabaseSequelize();
 
@@ -19,7 +19,7 @@ Position.init(
       allowNull: false,
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
   },
@@ -28,3 +28,17 @@ Position.init(
     sequelize: databaseSequelize.getDatabaseInstance(),
   }
 );
+
+Company.hasMany(Position, {
+  foreignKey: {
+    name: 'companyId',
+    allowNull: false,
+  },
+});
+
+Position.belongsTo(Company, {
+  foreignKey: {
+    name: 'companyId',
+    allowNull: false,
+  },
+});
