@@ -4,19 +4,19 @@ import { CandidateRepository } from './repositories/interfaces/candidate';
 export class CandidateService {
   constructor(private readonly candidateRepository: CandidateRepository) {}
 
-  public async findOne(id: number): Promise<{}> {
+  public async findOne(id: number, companyId: number): Promise<{}> {
     const options: FindOptions = {
       where: {
         id: id,
+        companyId: companyId,
       },
     };
     const candidate = await this.candidateRepository.findOne(options);
     return candidate;
   }
 
-  public async findAll(): Promise<Object> {
-    const options: FindOptions = {};
-    // Pending to implement a query that only returns the candidates that belong to this user
+  public async findAll(companyId: number): Promise<Object> {
+    const options: FindOptions = { where: { companyId: companyId } };
     const candidates = await this.candidateRepository.findAll(options);
     return candidates;
   }
@@ -26,7 +26,17 @@ export class CandidateService {
     return newCandidate;
   }
 
-  public async update(data: Object, options: UpdateOptions): Promise<Object> {
+  public async update(
+    data: Object,
+    id: number,
+    companyId: number
+  ): Promise<Object> {
+    const options: UpdateOptions = {
+      where: {
+        id: id,
+        companyId: companyId,
+      },
+    };
     const updatedCandidate = await this.candidateRepository.update(
       data,
       options
@@ -34,7 +44,10 @@ export class CandidateService {
     return updatedCandidate;
   }
 
-  public async delete(options: DestroyOptions): Promise<void> {
+  public async delete(id: number, companyId: number): Promise<void> {
+    const options: DestroyOptions = {
+      where: { id: id, companyId: companyId },
+    };
     const deletedCandidate = await this.candidateRepository.delete(options);
     return deletedCandidate;
   }
