@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { PositionService } from '../services/positions.service';
 import { PositionSequelizeRepository } from '../services/repositories/implementation/sequelize/position.repository';
-import { AuthRequest } from './interfaces/AuthRequest';
+import { RequestAuth } from './interfaces/AuthRequest';
 
 export class PositionsController {
   private readonly positionService: PositionService;
@@ -11,7 +11,7 @@ export class PositionsController {
   }
 
   public getPosition = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const companyId = parseInt(req.user.company.id);
@@ -24,7 +24,7 @@ export class PositionsController {
   };
 
   public getPositions = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const companyId = parseInt(req.user.company.id);
@@ -36,7 +36,7 @@ export class PositionsController {
   };
 
   public postPosition = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const body = req.body;
@@ -53,7 +53,7 @@ export class PositionsController {
   };
 
   public putPosition = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const body = req.body;
@@ -71,7 +71,7 @@ export class PositionsController {
   };
 
   public deletePosition = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const positionId = parseInt(req.params.positionId);
