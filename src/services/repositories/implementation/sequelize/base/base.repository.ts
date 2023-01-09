@@ -20,12 +20,12 @@ export abstract class BaseSequelizeRepository
     this.model = model;
   }
 
-  async findAll(options: FindOptions): Promise<Object[]> {
+  async findAll(options: FindOptions): Promise<any[]> {
     const allInstances = await this.model.findAll(options);
     return allInstances;
   }
 
-  async findOne(options: FindOptions): Promise<Object> {
+  async findOne(options: FindOptions): Promise<any> {
     const instance = await this.model.findOne(options);
     return instance;
   }
@@ -35,7 +35,7 @@ export abstract class BaseSequelizeRepository
     return count;
   }
 
-  async update(data: Object, options: UpdateOptions): Promise<Object> {
+  async update(data: Object, options: UpdateOptions): Promise<any> {
     const updatedInstance = await this.model.update(
       { ...data },
       { ...options, returning: true }
@@ -54,7 +54,7 @@ export abstract class BaseSequelizeRepository
       throw new ErrorResponse('Record not found', 400);
     }
   }
-  async create(data: Object): Promise<Object> {
+  async create(data: Object): Promise<any> {
     const instance = await this.model.create({ ...data });
     return instance;
   }
