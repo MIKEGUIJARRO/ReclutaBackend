@@ -80,7 +80,6 @@ export const updateGlobalIndexes = async (
       });
     } else {
       // Moving up
-      console.log('Moving up'.red);
       const response = await CandidateStatus.increment('index', {
         by: 1,
         where: {
