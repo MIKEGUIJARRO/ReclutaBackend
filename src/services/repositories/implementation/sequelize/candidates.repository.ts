@@ -1,11 +1,11 @@
 import { ModelStatic } from 'sequelize';
 import { Candidate } from '../../../../models/candidate';
-import { CandidateRepository } from '../../interfaces/candidate';
+import { CandidatesRepository } from '../../interfaces/candidates';
 import { BaseSequelizeRepository } from './base/base.repository';
 
 export class CandidateSequelizeRepository
   extends BaseSequelizeRepository
-  implements CandidateRepository
+  implements CandidatesRepository
 {
   model: ModelStatic<any>;
   constructor() {
