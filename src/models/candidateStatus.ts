@@ -1,6 +1,11 @@
 import { DataTypes, Model, Op } from 'sequelize';
 import { ErrorResponse } from '../common/errors/errorResponse';
 import { DatabaseSequelize } from '../config/database/implementation/sequelize/database';
+import {
+  getIndexProperties,
+  updateGlobalIndexes,
+  validateDataValues,
+} from '../helpers/models/candidateStatus';
 import { Candidate } from './candidate';
 import { Position } from './position';
 
@@ -11,7 +16,6 @@ export interface CandidateStatusAttributes {
   comments: string;
   stage: string;
   index: number;
-  positionStageIndex: string;
   createdAt?: Date;
   updatedAt?: Date;
   positionId: number;
@@ -38,10 +42,6 @@ CandidateStatus.init(
     },
     index: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    positionStageIndex: {
-      type: DataTypes.STRING,
       allowNull: true,
     },
   },
@@ -82,70 +82,38 @@ CandidateStatus.belongsTo(Position, {
   },
 });
 
-// Hooks Helpers
-
-const validateDataValues = async (
-  dataValues: CandidateStatusAttributes
-): Promise<void> => {
-  const promisePosition = Position.findOne({
-    where: {
-      id: dataValues.positionId,
-      stages: { [Op.contains]: [dataValues.stage] },
-    },
-  });
-  const promiseCandidateStatus = CandidateStatus.findOne({
-    where: {
-      positionId: dataValues.positionId,
-      candidateId: dataValues.candidateId,
-    },
-  });
-
-  const [responsePosition, responseCandidateStatus] = await Promise.all([
-    promisePosition,
-    promiseCandidateStatus,
-  ]);
-
-  if (!responsePosition) {
-    throw new ErrorResponse('Invalid stage property', 400);
-  }
-  if (responseCandidateStatus) {
-    throw new ErrorResponse('This candidate status already exists', 400);
-  }
-};
-const getIndexProperties = async (
-  dataValues: CandidateStatusAttributes
-): Promise<{ index: number; positionStageIndex: string }> => {
-  const count = await CandidateStatus.count({
-    where: {
-      stage: dataValues.stage,
-    },
-  });
-  return {
-    index: count,
-    positionStageIndex:
-      dataValues.positionId + ',' + dataValues.stage + ',' + count,
-  };
-};
-
 // Hooks
 CandidateStatus.addHook('beforeCreate', async (candidateStatus, options) => {
-  const dataValues: CandidateStatusAttributes = {
-    ...candidateStatus.dataValues,
-  };
+  try {
+    const dataValues: CandidateStatusAttributes = {
+      ...candidateStatus.dataValues,
+    };
 
-  const promiseGetIndexProperties = getIndexProperties(dataValues);
-  const promiseValidateDataValues = validateDataValues(dataValues);
+    const promiseGetIndexProperties = getIndexProperties(dataValues);
+    const promiseValidateDataValues = validateDataValues(dataValues);
 
-  const [{ index, positionStageIndex }] = await Promise.all([
-    promiseGetIndexProperties,
-    promiseValidateDataValues,
-  ]);
+    const [{ index }] = await Promise.all([
+      promiseGetIndexProperties,
+      promiseValidateDataValues,
+    ]);
 
-  candidateStatus.dataValues = {
-    ...dataValues,
-    index: index,
-    positionStageIndex: positionStageIndex,
-  };
+    candidateStatus.dataValues = {
+      ...dataValues,
+      index: index,
+    };
+  } catch (e) {
+    console.log(e);
+  }
 });
 
-CandidateStatus.sync({ force: true });
+CandidateStatus.addHook('beforeUpdate', async (candidateStatus, options) => {
+  try {
+    const dataValues: CandidateStatusAttributes = {
+      ...candidateStatus.dataValues,
+    };
+
+    await updateGlobalIndexes(dataValues, candidateStatus.previous());
+  } catch (e) {
+    console.log(e);
+  }
+});
