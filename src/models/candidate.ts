@@ -4,6 +4,16 @@ import { Company } from './company';
 
 const databaseSequelize = new DatabaseSequelize();
 
+export interface CandidateAttributes {
+  id: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  companyId: number;
+}
+
 export class Candidate extends Model {}
 
 Candidate.init(
