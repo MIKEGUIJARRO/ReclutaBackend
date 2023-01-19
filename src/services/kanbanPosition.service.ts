@@ -40,6 +40,7 @@ interface ContentData {
   candidateStatusId: string;
   candidateId: string;
   firstName: string;
+  positionId: string;
 }
 
 const createItemId = (id: number): string => {
@@ -104,6 +105,7 @@ export class KanbanPositionService {
           candidateId: String(position.CandidateStatuses[i].Candidate.id),
           candidateStatusId: String(position.CandidateStatuses[i].id),
           firstName: position.CandidateStatuses[i].Candidate.firstName,
+          positionId: String(id),
         },
       };
     }
