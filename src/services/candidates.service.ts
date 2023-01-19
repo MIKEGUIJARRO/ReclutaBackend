@@ -1,8 +1,15 @@
-import { DestroyOptions, FindOptions, UpdateOptions } from 'sequelize';
-import { CandidateRepository } from './repositories/interfaces/candidate';
+import {
+  DestroyOptions,
+  FindOptions,
+  Includeable,
+  Op,
+  UpdateOptions,
+} from 'sequelize';
+import { CandidateStatus } from '../models/candidateStatus';
+import { CandidatesRepository } from './repositories/interfaces/candidates';
 
 export class CandidateService {
-  constructor(private readonly candidateRepository: CandidateRepository) {}
+  constructor(private readonly candidateRepository: CandidatesRepository) {}
 
   public async findOne(id: number, companyId: number): Promise<{}> {
     const options: FindOptions = {
@@ -15,9 +22,39 @@ export class CandidateService {
     return candidate;
   }
 
-  public async findAll(companyId: number): Promise<Object> {
-    const options: FindOptions = { where: { companyId: companyId } };
+  public async findAll(companyId: number, positionId?: any): Promise<Object> {
+    const includeOptions: Includeable = {
+      model: CandidateStatus,
+    };
+
+    const options: FindOptions = {
+      where: { companyId: companyId },
+      include: [includeOptions],
+      order: [['createdAt', 'DESC']],
+    };
+
+    if (positionId) {
+      options.where = {
+        '$CandidateStatuses.candidateId$': null,
+        ...options.where,
+      };
+
+      includeOptions.subQuery = false;
+    }
+
     const candidates = await this.candidateRepository.findAll(options);
+    candidates.forEach((candidate) => {
+      if (
+        candidate.dataValues.CandidateStatuses &&
+        candidate.dataValues.CandidateStatuses.length
+      ) {
+        candidate.dataValues.positions =
+          candidate.dataValues.CandidateStatuses.length;
+      } else {
+        candidate.dataValues.positions = 0;
+      }
+    });
+
     return candidates;
   }
 
