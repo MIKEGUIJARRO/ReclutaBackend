@@ -33,5 +33,12 @@ export class CandidatesStatusRoutes
         partnerAuthCheck,
         asyncHandler(this.controller.deleteCandidateStatus)
       );
+
+    this.router
+      .route('/bulk')
+      .post(
+        partnerAuthCheck,
+        asyncHandler(this.controller.postBulkCandidateStatus)
+      );
   }
 }
