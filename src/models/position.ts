@@ -4,6 +4,16 @@ import { Company } from './company';
 
 const databaseSequelize = new DatabaseSequelize();
 
+export interface PositionAttributes {
+  id: string;
+  title: string;
+  description: string;
+  stages: string[];
+  createdAt?: Date;
+  updatedAt?: Date;
+  companyId: number;
+}
+
 export class Position extends Model {}
 
 Position.init(
