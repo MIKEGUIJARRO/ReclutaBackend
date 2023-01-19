@@ -1,5 +1,6 @@
 import { DestroyOptions, FindOptions, UpdateOptions } from 'sequelize';
 import { Candidate } from '../models/candidate';
+import { CandidateStatusAttributes } from '../models/candidateStatus';
 import { Position } from '../models/position';
 import { CandidatesStatusRepository } from './repositories/interfaces/candidatesStatus';
 
@@ -37,6 +38,7 @@ export class CandidateStatusService {
     positionId: number
   ): Promise<Object[]> {
     const options: FindOptions = {
+      order: [['index', 'ASC']],
       include: [
         {
           model: Candidate,
@@ -61,8 +63,17 @@ export class CandidateStatusService {
     return newPosition;
   }
 
+  public async bulkCreate(data: CandidateStatusAttributes[]): Promise<Object> {
+    const promises = data.map((candidateStatus) => {
+      return this.candidateStatusRepository.create(candidateStatus);
+    });
+
+    const responses = await Promise.all(promises);
+    return responses;
+  }
+
   public async update(
-    data: Object,
+    data: CandidateStatusAttributes,
     id: number,
     candidateId: number,
     positionId: number
@@ -73,6 +84,7 @@ export class CandidateStatusService {
         candidateId: candidateId,
         positionId: positionId,
       },
+      individualHooks: true,
     };
     const updatedPosition = await this.candidateStatusRepository.update(
       data,
