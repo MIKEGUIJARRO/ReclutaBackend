@@ -1,5 +1,4 @@
 import { DataTypes, Model, Op } from 'sequelize';
-import { ErrorResponse } from '../common/errors/errorResponse';
 import { DatabaseSequelize } from '../config/database/implementation/sequelize/database';
 import {
   getIndexProperties,
