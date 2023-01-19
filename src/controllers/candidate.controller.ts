@@ -31,7 +31,13 @@ export class CandidatesController {
     res: Response
   ): Promise<void> => {
     const companyId = parseInt(req.user.company.id);
-    const candidates = await this.candidateService.findAll(companyId);
+    const positionIdNot = req.query.positionIdNot;
+
+    console.log(positionIdNot);
+    const candidates = await this.candidateService.findAll(
+      companyId,
+      positionIdNot
+    );
     res.status(200).json({
       success: true,
       data: candidates,
