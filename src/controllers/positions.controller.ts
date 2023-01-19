@@ -1,13 +1,13 @@
 import { Response } from 'express';
-import { PositionService } from '../services/positions.service';
-import { PositionSequelizeRepository } from '../services/repositories/implementation/sequelize/position.repository';
+import { PositionsService } from '../services/positions.service';
+import { PositionsSequelizeRepository } from '../services/repositories/implementation/sequelize/positions.repository';
 import { RequestAuth } from './interfaces/AuthRequest';
 
 export class PositionsController {
-  private readonly positionService: PositionService;
+  private readonly positionsService: PositionsService;
   constructor() {
-    const positionSequelizeRepository = new PositionSequelizeRepository();
-    this.positionService = new PositionService(positionSequelizeRepository);
+    const positionsSequelizeRepository = new PositionsSequelizeRepository();
+    this.positionsService = new PositionsService(positionsSequelizeRepository);
   }
 
   public getPosition = async (
@@ -16,7 +16,7 @@ export class PositionsController {
   ): Promise<void> => {
     const companyId = parseInt(req.user.company.id);
     const positionId = parseInt(req.params.positionId);
-    const position = await this.positionService.findOne(positionId, companyId);
+    const position = await this.positionsService.findOne(positionId, companyId);
     res.status(200).json({
       success: true,
       data: position,
@@ -28,7 +28,8 @@ export class PositionsController {
     res: Response
   ): Promise<void> => {
     const companyId = parseInt(req.user.company.id);
-    const positions = await this.positionService.findAll(companyId);
+    const positions = await this.positionsService.findAll(companyId);
+
     res.status(200).json({
       success: true,
       data: positions,
@@ -41,7 +42,7 @@ export class PositionsController {
   ): Promise<void> => {
     const body = req.body;
     const companyId = parseInt(req.user.company.id);
-    const newPosition = await this.positionService.create({
+    const newPosition = await this.positionsService.create({
       ...body,
       companyId: companyId,
     });
@@ -59,7 +60,7 @@ export class PositionsController {
     const body = req.body;
     const positionId = parseInt(req.params.positionId);
     const companyId = parseInt(req.user.company.id);
-    const updatedPosition = await this.positionService.update(
+    const updatedPosition = await this.positionsService.update(
       body,
       positionId,
       companyId
@@ -76,7 +77,7 @@ export class PositionsController {
   ): Promise<void> => {
     const positionId = parseInt(req.params.positionId);
     const companyId = parseInt(req.user.company.id);
-    const deletedPosition = await this.positionService.delete(
+    const deletedPosition = await this.positionsService.delete(
       positionId,
       companyId
     );
