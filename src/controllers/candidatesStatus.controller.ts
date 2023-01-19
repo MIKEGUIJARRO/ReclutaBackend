@@ -67,6 +67,22 @@ export class CandidatesStatusController {
     });
   };
 
+  public postBulkCandidateStatus = async (
+    req: RequestAuth,
+    res: Response
+  ): Promise<void> => {
+    const { data } = req.body;
+    if (!Array.isArray(data)) {
+      throw new ErrorResponse('The body should contain a property data[]', 400);
+    }
+    const createdCandidatesStatus =
+      await this.candidateStatusService.bulkCreate(data);
+    res.status(200).json({
+      success: true,
+      data: createdCandidatesStatus,
+    });
+  };
+
   public putCandidateStatus = async (
     req: RequestAuth,
     res: Response
