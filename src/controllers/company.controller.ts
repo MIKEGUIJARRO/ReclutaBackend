@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { CompanyService } from '../services/company.service';
 import { CompanySequelizeRepository } from '../services/repositories/implementation/sequelize/company.repository';
-import { AuthRequest } from './interfaces/AuthRequest';
+import { RequestAuth } from './interfaces/AuthRequest';
 
 export class CompanyController {
   private readonly companyService: CompanyService;
@@ -11,7 +11,7 @@ export class CompanyController {
   }
 
   public getCompany = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const userId = parseInt(req.user.id);
@@ -24,7 +24,7 @@ export class CompanyController {
   };
 
   public getCompanies = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const userId = parseInt(req.user.id);
@@ -36,7 +36,7 @@ export class CompanyController {
   };
 
   public postCompany = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const userId = req.user.id;
@@ -55,7 +55,7 @@ export class CompanyController {
   };
 
   public putCompany = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const body = req.body;
@@ -73,7 +73,7 @@ export class CompanyController {
   };
 
   public deleteCompany = async (
-    req: AuthRequest,
+    req: RequestAuth,
     res: Response
   ): Promise<void> => {
     const companyId = parseInt(req.params.companyId);
