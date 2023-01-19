@@ -10,6 +10,8 @@ import cors from 'cors';
 import connectSessionSequelize from 'connect-session-sequelize';
 import { CompanyRoutes } from './routes/company.routes';
 import { PositionsRoutes } from './routes/positions.routes';
+import { CandidatesStatusRoutes } from './routes/candidatesStatus.routes';
+import morgan from 'morgan';
 
 // Extending module
 declare module 'express-session' {
@@ -43,6 +45,8 @@ export class App {
         credentials: true,
       })
     );
+
+    this.app.use(morgan('dev'));
     const SequelizeStore = connectSessionSequelize(session.Store);
     const sessionStore = new SequelizeStore({ db: db.getDatabaseInstance() });
 
@@ -84,11 +88,16 @@ export class App {
     const candidatesRoutes = new CandidatesRoutes();
     const companyRoutes = new CompanyRoutes();
     const positionsRoutes = new PositionsRoutes();
+    const candidatesStatusRoutes = new CandidatesStatusRoutes();
 
     mainRouter.use(`/${authRoutes.name}`, authRoutes.router);
     mainRouter.use(`/${candidatesRoutes.name}`, candidatesRoutes.router);
     mainRouter.use(`/${companyRoutes.name}`, companyRoutes.router);
     mainRouter.use(`/${positionsRoutes.name}`, positionsRoutes.router);
+    mainRouter.use(
+      `/${candidatesStatusRoutes.name}`,
+      candidatesStatusRoutes.router
+    );
 
     app.use(prefix + apiVersioning, mainRouter);
 
