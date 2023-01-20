@@ -12,6 +12,7 @@ import { CompanyRoutes } from './routes/company.routes';
 import { PositionsRoutes } from './routes/positions.routes';
 import { CandidatesStatusRoutes } from './routes/candidatesStatus.routes';
 import morgan from 'morgan';
+import { QueryTypes } from 'sequelize';
 
 // Extending module
 declare module 'express-session' {
@@ -49,7 +50,12 @@ export class App {
     this.app.use(morgan('dev'));
     const SequelizeStore = connectSessionSequelize(session.Store);
     const sessionStore = new SequelizeStore({ db: db.getDatabaseInstance() });
-
+    checkIfSessionsTableExists().then((responseTableExists) => {
+      if (!responseTableExists) {
+        console.log('Table does not exists'.green);
+        sessionStore.sync({ force: true });
+      }
+    });
     this.app.use(
       session({
         secret: 'random secret',
@@ -104,3 +110,15 @@ export class App {
     app.use(errorHandler);
   }
 }
+
+const checkIfSessionsTableExists = async () => {
+  const query = `SELECT EXISTS (
+      SELECT * FROM pg_tables
+      WHERE  schemaname = 'public'
+      AND    tablename  = 'Sessions'
+   );`;
+  const database = new DatabaseSequelize();
+  const queryResult = await database.getDatabaseInstance().query(query);
+  const response: any = queryResult[0];
+  return response[0].exists;
+};
