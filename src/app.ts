@@ -1,18 +1,19 @@
 import express, { Application, Router } from 'express';
 import 'colors';
 import passport from 'passport';
-import { AuthRoutes } from './routes/auth.routes';
-import { CandidatesRoutes } from './routes/candidates.routes';
-import { DatabaseSequelize } from './config/database/implementation/sequelize/database';
-import { errorHandler } from './middlewares/errorHandler';
 import session from 'express-session';
 import cors from 'cors';
 import connectSessionSequelize from 'connect-session-sequelize';
+import morgan from 'morgan';
+
+import { DatabaseSequelize } from './config/database/implementation/sequelize/database';
+import { errorHandler } from './middlewares/errorHandler';
+import { AuthRoutes } from './routes/auth.routes';
+import { CandidatesRoutes } from './routes/candidates.routes';
 import { CompanyRoutes } from './routes/company.routes';
 import { PositionsRoutes } from './routes/positions.routes';
 import { CandidatesStatusRoutes } from './routes/candidatesStatus.routes';
-import morgan from 'morgan';
-import { QueryTypes } from 'sequelize';
+import { ErrorResponse } from './common/errors/errorResponse';
 
 // Extending module
 declare module 'express-session' {
@@ -27,38 +28,37 @@ export class App {
   private isInit: boolean = false;
   constructor() {
     this.app = express();
-
-    // Singleton implementation
   }
 
   init() {
     this.isInit = true;
     // Create Database
     const db = new DatabaseSequelize();
-    //db.syncAllModels({ force: true });
 
     this.app.use(express.json({ limit: 2000000 }));
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(
       cors({
-        origin: '*',
+        origin: process.env.CLIENT_HOSTNAME,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'HEAD'],
         credentials: true,
       })
     );
 
-    this.app.use(morgan('dev'));
+    if (process.env.NODE_ENV === 'production') {
+      this.app.use(morgan('dev'));
+    }
+
     const SequelizeStore = connectSessionSequelize(session.Store);
     const sessionStore = new SequelizeStore({ db: db.getDatabaseInstance() });
     checkIfSessionsTableExists().then((responseTableExists) => {
       if (!responseTableExists) {
-        console.log('Table does not exists'.green);
         sessionStore.sync({ force: true });
       }
     });
     this.app.use(
       session({
-        secret: 'random secret',
+        secret: process.env.SESSION_SECRET as string,
         resave: false,
         saveUninitialized: true,
         cookie: {
@@ -111,7 +111,7 @@ export class App {
   }
 }
 
-const checkIfSessionsTableExists = async () => {
+const checkIfSessionsTableExists = async (): Promise<boolean> => {
   const query = `SELECT EXISTS (
       SELECT * FROM pg_tables
       WHERE  schemaname = 'public'
@@ -119,6 +119,7 @@ const checkIfSessionsTableExists = async () => {
    );`;
   const database = new DatabaseSequelize();
   const queryResult = await database.getDatabaseInstance().query(query);
-  const response: any = queryResult[0];
-  return response[0].exists;
+  const response: any[] = queryResult[0];
+  const exists: boolean = response[0].exists;
+  return exists;
 };
