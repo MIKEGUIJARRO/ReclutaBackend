@@ -13,7 +13,6 @@ import { CandidatesRoutes } from './routes/candidates.routes';
 import { CompanyRoutes } from './routes/company.routes';
 import { PositionsRoutes } from './routes/positions.routes';
 import { CandidatesStatusRoutes } from './routes/candidatesStatus.routes';
-import { ErrorResponse } from './common/errors/errorResponse';
 
 // Extending module
 declare module 'express-session' {
