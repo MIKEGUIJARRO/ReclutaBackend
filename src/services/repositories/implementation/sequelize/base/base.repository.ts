@@ -3,6 +3,7 @@ import { SequelizeRead } from '../interfaces/read';
 import { SequelizeWrite } from '../interfaces/write';
 
 import {
+  Model,
   ModelStatic,
   UpdateOptions,
   FindOptions,
@@ -10,22 +11,20 @@ import {
   DestroyOptions,
 } from 'sequelize';
 import { ErrorResponse } from '../../../../../common/errors/errorResponse';
+import { MakeNullishOptional } from 'sequelize/types/utils';
 
 // that class only can be extended
-export abstract class BaseSequelizeRepository
+export abstract class BaseSequelizeRepository<SpecificModel extends Model>
   implements SequelizeRead, SequelizeWrite
 {
-  model: ModelStatic<any>;
-  constructor(model: ModelStatic<any>) {
-    this.model = model;
-  }
+  constructor(public model: ModelStatic<SpecificModel>) {}
 
-  async findAll(options: FindOptions): Promise<any[]> {
+  async findAll(options: FindOptions): Promise<SpecificModel[]> {
     const allInstances = await this.model.findAll(options);
     return allInstances;
   }
 
-  async findOne(options: FindOptions): Promise<any> {
+  async findOne(options: FindOptions): Promise<SpecificModel | null> {
     const instance = await this.model.findOne(options);
     return instance;
   }
@@ -35,11 +34,12 @@ export abstract class BaseSequelizeRepository
     return count;
   }
 
-  async update(data: Object, options: UpdateOptions): Promise<any> {
+  async update(data: Object, options: UpdateOptions): Promise<SpecificModel[]> {
     const updatedInstance = await this.model.update(
       { ...data },
       { ...options, returning: true }
     );
+
     if (updatedInstance[0] === 0) {
       throw new ErrorResponse('Invalid request.', 400);
     }
@@ -54,8 +54,10 @@ export abstract class BaseSequelizeRepository
       throw new ErrorResponse('Record not found', 400);
     }
   }
-  async create(data: Object): Promise<any> {
-    const instance = await this.model.create({ ...data });
+  async create(
+    data: MakeNullishOptional<SpecificModel>
+  ): Promise<SpecificModel> {
+    const instance = await this.model.create(data);
     return instance;
   }
 }
