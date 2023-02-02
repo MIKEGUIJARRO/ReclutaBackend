@@ -1,4 +1,6 @@
 import { SequelizeRead } from '../implementation/sequelize/interfaces/read';
 import { SequelizeWrite } from '../implementation/sequelize/interfaces/write';
-
-export interface CandidatesRepository extends SequelizeRead, SequelizeWrite {}
+import { Candidate } from '../../../models/candidate';
+export interface CandidatesRepository
+  extends SequelizeRead<Candidate>,
+    SequelizeWrite<Candidate> {}
