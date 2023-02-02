@@ -1,7 +1,7 @@
-import { CreateOptions, DestroyOptions, UpdateOptions } from 'sequelize';
+import { DestroyOptions, UpdateOptions } from 'sequelize';
 
-export interface SequelizeWrite {
-  create(data: Object): Promise<any>;
-  update(data: Object, options: UpdateOptions): Promise<any>;
+export interface SequelizeWrite<T> {
+  create(data: Object): Promise<T>;
+  update(data: Object, options: UpdateOptions): Promise<T[]>;
   delete(options: DestroyOptions): Promise<void>;
 }
