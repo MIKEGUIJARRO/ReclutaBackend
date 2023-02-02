@@ -15,17 +15,18 @@ import { MakeNullishOptional } from 'sequelize/types/utils';
 
 // that class only can be extended
 export abstract class BaseSequelizeRepository<SpecificModel extends Model>
-  implements SequelizeRead, SequelizeWrite
+  implements SequelizeRead<any>, SequelizeWrite<any>
 {
-  constructor(public model: ModelStatic<SpecificModel>) {}
+  constructor(protected model: ModelStatic<SpecificModel>) {}
 
-  async findAll(options: FindOptions): Promise<SpecificModel[]> {
+  async findAll(options: FindOptions): Promise<any[]> {
     const allInstances = await this.model.findAll(options);
     return allInstances;
   }
 
-  async findOne(options: FindOptions): Promise<SpecificModel | null> {
+  async findOne(options: FindOptions): Promise<any | null> {
     const instance = await this.model.findOne(options);
+    instance;
     return instance;
   }
 
@@ -34,7 +35,7 @@ export abstract class BaseSequelizeRepository<SpecificModel extends Model>
     return count;
   }
 
-  async update(data: Object, options: UpdateOptions): Promise<SpecificModel[]> {
+  async update(data: Object, options: UpdateOptions): Promise<any[]> {
     const updatedInstance = await this.model.update(
       { ...data },
       { ...options, returning: true }
@@ -54,9 +55,7 @@ export abstract class BaseSequelizeRepository<SpecificModel extends Model>
       throw new ErrorResponse('Record not found', 400);
     }
   }
-  async create(
-    data: MakeNullishOptional<SpecificModel>
-  ): Promise<SpecificModel> {
+  async create(data: MakeNullishOptional<SpecificModel>): Promise<any> {
     const instance = await this.model.create(data);
     return instance;
   }
