@@ -4,13 +4,10 @@ import { KanbanPositionRepository } from '../../interfaces/kanbanPosition';
 import { BaseSequelizeRepository } from './base/base.repository';
 
 export class KanbanPositionSequelizeRepository
-  extends BaseSequelizeRepository
+  extends BaseSequelizeRepository<Position>
   implements KanbanPositionRepository
 {
-  model: ModelStatic<any>;
   constructor() {
-    const model = Position;
-    super(model);
-    this.model = model;
+    super(Position);
   }
 }
