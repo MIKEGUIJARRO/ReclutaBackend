@@ -1,4 +1,6 @@
 import { SequelizeRead } from '../implementation/sequelize/interfaces/read';
 import { SequelizeWrite } from '../implementation/sequelize/interfaces/write';
-
-export interface PositionsRepository extends SequelizeRead, SequelizeWrite {}
+import { PositionAttributes } from '../../../models/position';
+export interface PositionsRepository
+  extends SequelizeRead<PositionAttributes>,
+    SequelizeWrite<PositionAttributes> {}
