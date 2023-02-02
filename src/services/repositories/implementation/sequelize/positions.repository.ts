@@ -4,13 +4,10 @@ import { PositionsRepository } from '../../interfaces/positions';
 import { BaseSequelizeRepository } from './base/base.repository';
 
 export class PositionsSequelizeRepository
-  extends BaseSequelizeRepository
+  extends BaseSequelizeRepository<Position>
   implements PositionsRepository
 {
-  model: ModelStatic<any>;
   constructor() {
-    const model = Position;
-    super(model);
-    this.model = model;
+    super(Position);
   }
 }
