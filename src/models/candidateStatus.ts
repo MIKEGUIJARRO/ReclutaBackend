@@ -1,4 +1,4 @@
-import { DataTypes, Model, Op } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import { DatabaseSequelize } from '../config/database/implementation/sequelize/database';
 import {
   getIndexProperties,
@@ -21,7 +21,19 @@ export interface CandidateStatusAttributes {
   candidateId: number;
 }
 
-export class CandidateStatus extends Model {}
+export class CandidateStatus
+  extends Model
+  implements CandidateStatusAttributes
+{
+  declare id: number;
+  declare comments: string;
+  declare stage: string;
+  declare index: number;
+  declare createdAt?: Date | undefined;
+  declare updatedAt?: Date | undefined;
+  declare positionId: number;
+  declare candidateId: number;
+}
 
 CandidateStatus.init(
   {
