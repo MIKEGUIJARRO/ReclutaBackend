@@ -4,7 +4,25 @@ import { Partner } from './partner';
 
 const databaseSequelize = new DatabaseSequelize();
 
-export class Company extends Model {}
+export interface CompanyAttributes {
+  id: number;
+  name: string;
+  website: string;
+  companySize: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  partnerId: number;
+}
+
+export class Company extends Model implements CompanyAttributes {
+  declare id: number;
+  declare name: string;
+  declare website: string;
+  declare companySize: string;
+  declare createdAt?: Date | undefined;
+  declare updatedAt?: Date | undefined;
+  declare partnerId: number;
+}
 
 Company.init(
   {
@@ -56,5 +74,3 @@ Company.belongsToMany(Partner, {
     allowNull: false,
   },
 });
-
-//Company.sync({ force: true });
