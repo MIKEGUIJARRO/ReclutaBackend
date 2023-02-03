@@ -43,6 +43,13 @@ interface ContentData {
   positionId: string;
 }
 
+interface KanbanReturn {
+  id: string;
+  title: string;
+  description: string;
+  kanbanData: KanbanData<ContentData>;
+}
+
 const createItemId = (id: number): string => {
   return 'Item-' + id;
 };
@@ -52,7 +59,7 @@ export class KanbanPositionService {
     private readonly kanbanPositionRepository: KanbanPositionRepository
   ) {}
 
-  public async findOne(id: number, companyId: number): Promise<Object> {
+  public async findOne(id: number, companyId: number): Promise<KanbanReturn> {
     const options: FindOptions = {
       where: {
         id: id,
