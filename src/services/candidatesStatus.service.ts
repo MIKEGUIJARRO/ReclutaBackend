@@ -9,7 +9,10 @@ export class CandidateStatusService {
     private readonly candidateStatusRepository: CandidatesStatusRepository
   ) {}
 
-  public async findOne(id: number, companyId: number): Promise<{}> {
+  public async findOne(
+    id: number,
+    companyId: number
+  ): Promise<CandidateStatusAttributes | null> {
     const options: FindOptions = {
       where: {
         id: id,
@@ -36,7 +39,7 @@ export class CandidateStatusService {
   public async findAll(
     companyId: number,
     positionId: number
-  ): Promise<Object[]> {
+  ): Promise<CandidateStatusAttributes[]> {
     const options: FindOptions = {
       order: [['index', 'ASC']],
       include: [
@@ -58,12 +61,16 @@ export class CandidateStatusService {
     return positions;
   }
 
-  public async create(data: Object): Promise<Object> {
+  public async create(
+    data: CandidateStatusAttributes
+  ): Promise<CandidateStatusAttributes> {
     const newPosition = await this.candidateStatusRepository.create(data);
     return newPosition;
   }
 
-  public async bulkCreate(data: CandidateStatusAttributes[]): Promise<Object> {
+  public async bulkCreate(
+    data: CandidateStatusAttributes[]
+  ): Promise<CandidateStatusAttributes[]> {
     const promises = data.map((candidateStatus) => {
       return this.candidateStatusRepository.create(candidateStatus);
     });
@@ -77,7 +84,7 @@ export class CandidateStatusService {
     id: number,
     candidateId: number,
     positionId: number
-  ): Promise<Object> {
+  ): Promise<CandidateStatusAttributes[]> {
     const options: UpdateOptions = {
       where: {
         id: id,
