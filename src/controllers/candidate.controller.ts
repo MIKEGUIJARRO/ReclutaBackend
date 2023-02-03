@@ -1,13 +1,13 @@
-import { Request, Response } from 'express';
-import { CandidateService } from '../services/candidates.service';
-import { CandidateSequelizeRepository } from '../services/repositories/implementation/sequelize/candidates.repository';
+import { Response } from 'express';
+import { CandidatesService } from '../services/candidates.service';
+import { CandidatesSequelizeRepository } from '../services/repositories/implementation/sequelize/candidates.repository';
 import { RequestAuth } from './interfaces/AuthRequest';
 
 export class CandidatesController {
-  private readonly candidateService: CandidateService;
+  private readonly candidateService: CandidatesService;
   constructor() {
-    const candidateSequelizeRepository = new CandidateSequelizeRepository();
-    this.candidateService = new CandidateService(candidateSequelizeRepository);
+    const candidateSequelizeRepository = new CandidatesSequelizeRepository();
+    this.candidateService = new CandidatesService(candidateSequelizeRepository);
   }
 
   public getCandidate = async (
@@ -31,9 +31,7 @@ export class CandidatesController {
     res: Response
   ): Promise<void> => {
     const companyId = parseInt(req.user.company.id);
-    const positionIdNot = req.query.positionIdNot;
-
-    console.log(positionIdNot);
+    const positionIdNot = parseInt(req.query.positionIdNot as string);
     const candidates = await this.candidateService.findAll(
       companyId,
       positionIdNot
