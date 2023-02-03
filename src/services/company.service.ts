@@ -1,10 +1,14 @@
 import { DestroyOptions, FindOptions, UpdateOptions } from 'sequelize';
 import { CompanyRepository } from './repositories/interfaces/company';
+import { CompanyAttributes } from '../models/company';
 
 export class CompanyService {
   constructor(private readonly companyRepository: CompanyRepository) {}
 
-  public async findOne(id: number, userId: number): Promise<{}> {
+  public async findOne(
+    id: number,
+    userId: number
+  ): Promise<CompanyAttributes | null> {
     const options: FindOptions = {
       where: {
         id: id,
@@ -15,7 +19,7 @@ export class CompanyService {
     return company;
   }
 
-  public async findAll(userId: number): Promise<Object[]> {
+  public async findAll(userId: number): Promise<CompanyAttributes[]> {
     const options: FindOptions = {
       where: {
         partnerId: userId,
@@ -25,7 +29,7 @@ export class CompanyService {
     return companies;
   }
 
-  public async create(data: Object): Promise<Object> {
+  public async create(data: CompanyAttributes): Promise<CompanyAttributes> {
     const newCompany = await this.companyRepository.create(data);
     return newCompany;
   }
@@ -34,7 +38,7 @@ export class CompanyService {
     data: Object,
     id: number,
     userId: number
-  ): Promise<Object> {
+  ): Promise<CompanyAttributes[]> {
     const options: UpdateOptions = {
       where: {
         id: id,
