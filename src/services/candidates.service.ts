@@ -2,27 +2,33 @@ import {
   DestroyOptions,
   FindOptions,
   Includeable,
-  Op,
   UpdateOptions,
 } from 'sequelize';
 import { CandidateStatus } from '../models/candidateStatus';
+import { CandidateAttributes } from '../models/candidate';
 import { CandidatesRepository } from './repositories/interfaces/candidates';
 
-export class CandidateService {
-  constructor(private readonly candidateRepository: CandidatesRepository) {}
+export class CandidatesService {
+  constructor(private readonly candidatesRepository: CandidatesRepository) {}
 
-  public async findOne(id: number, companyId: number): Promise<{}> {
+  public async findOne(
+    id: number,
+    companyId: number
+  ): Promise<CandidateAttributes | null> {
     const options: FindOptions = {
       where: {
         id: id,
         companyId: companyId,
       },
     };
-    const candidate = await this.candidateRepository.findOne(options);
-    return candidate;
+    const candidate = await this.candidatesRepository.findOne(options);
+    return candidate?.dataValues;
   }
 
-  public async findAll(companyId: number, positionId?: any): Promise<Object> {
+  public async findAll(
+    companyId: number,
+    positionId?: number
+  ): Promise<CandidateAttributes[]> {
     const includeOptions: Includeable = {
       model: CandidateStatus,
     };
@@ -42,7 +48,7 @@ export class CandidateService {
       includeOptions.subQuery = false;
     }
 
-    const candidates = await this.candidateRepository.findAll(options);
+    const candidates = await this.candidatesRepository.findAll(options);
     candidates.forEach((candidate) => {
       if (
         candidate.dataValues.CandidateStatuses &&
@@ -58,8 +64,8 @@ export class CandidateService {
     return candidates;
   }
 
-  public async create(data: Object): Promise<Object> {
-    const newCandidate = await this.candidateRepository.create(data);
+  public async create(data: CandidateAttributes): Promise<CandidateAttributes> {
+    const newCandidate = await this.candidatesRepository.create(data);
     return newCandidate;
   }
 
@@ -67,14 +73,14 @@ export class CandidateService {
     data: Object,
     id: number,
     companyId: number
-  ): Promise<Object> {
+  ): Promise<CandidateAttributes[]> {
     const options: UpdateOptions = {
       where: {
         id: id,
         companyId: companyId,
       },
     };
-    const updatedCandidate = await this.candidateRepository.update(
+    const updatedCandidate = await this.candidatesRepository.update(
       data,
       options
     );
@@ -85,7 +91,7 @@ export class CandidateService {
     const options: DestroyOptions = {
       where: { id: id, companyId: companyId },
     };
-    const deletedCandidate = await this.candidateRepository.delete(options);
+    const deletedCandidate = await this.candidatesRepository.delete(options);
     return deletedCandidate;
   }
 }
