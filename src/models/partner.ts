@@ -2,7 +2,27 @@ import { DataTypes, Model } from 'sequelize';
 import { DatabaseSequelize } from '../config/database/implementation/sequelize/database';
 const databaseSequelize = new DatabaseSequelize();
 
-export class Partner extends Model {}
+export interface PartnerAttributes {
+  id: number;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export class Partner extends Model implements PartnerAttributes {
+  declare id: number;
+  declare firstName: string;
+  declare middleName: string;
+  declare lastName: string;
+  declare email: string;
+  declare password: string;
+  declare createdAt?: Date | undefined;
+  declare updatedAt?: Date | undefined;
+}
 
 Partner.init(
   {
@@ -47,5 +67,3 @@ Partner.init(
     sequelize: databaseSequelize.getDatabaseInstance(), // We need to pass the connection instance
   }
 );
-
-console.log(databaseSequelize.getDatabaseInstance().models);
