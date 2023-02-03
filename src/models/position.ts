@@ -14,7 +14,15 @@ export interface PositionAttributes {
   companyId: number;
 }
 
-export class Position extends Model {}
+export class Position extends Model implements PositionAttributes {
+  declare id: string;
+  declare title: string;
+  declare description: string;
+  declare stages: string[];
+  declare createdAt?: Date | undefined;
+  declare updatedAt?: Date | undefined;
+  declare companyId: number;
+}
 
 Position.init(
   {
