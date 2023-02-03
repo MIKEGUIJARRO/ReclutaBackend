@@ -14,7 +14,15 @@ export interface CandidateAttributes {
   companyId: number;
 }
 
-export class Candidate extends Model {}
+export class Candidate extends Model implements CandidateAttributes {
+  declare id: number;
+  declare firstName: string;
+  declare middleName: string;
+  declare lastName: string;
+  declare createdAt?: Date | undefined;
+  declare updatedAt?: Date | undefined;
+  declare companyId: number;
+}
 
 Candidate.init(
   {
